@@ -14,12 +14,35 @@ public class Player : MonoBehaviour {
     private float playerHeight = 2f;
 
     private bool isWalking;
+    private Vector3 lastInteractDir;
 
     private void Update() {
-        Vector2 inputVector = gameInput.GetMovementVectorNormalized();
+        Vector2 inputDirVectorRaw = gameInput.GetDirectionVectorNormalized();
+        Vector3 inputDirVector = new Vector3(inputDirVectorRaw.x, 0f, inputDirVectorRaw.y);
 
-        Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
+        HandleMovement(inputDirVector);
+        HandleInteractions(inputDirVector);
+    }
 
+    private void HandleInteractions(Vector3 interactDir) {
+
+        // Cache latest interact direction
+        if (interactDir != Vector3.zero) {
+            lastInteractDir = interactDir;
+        }
+
+        // Check for interactable objects
+        float interactDistance = 2f;
+        RaycastHit raycastHit;
+        if (Physics.Raycast(transform.position, lastInteractDir, out raycastHit, interactDistance)) {
+            Debug.Log(raycastHit.transform);
+        } else {
+            Debug.Log("-");
+        }
+    }
+
+    private void HandleMovement(Vector3 moveDir) {
+     
         // Face direction of input
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
 
