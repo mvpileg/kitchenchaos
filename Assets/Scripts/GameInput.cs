@@ -9,6 +9,12 @@ public class GameInput : MonoBehaviour {
     private void Awake() {
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
+
+        playerInputActions.Player.Interact.performed += InteractPerformed;
+    }
+
+    private void InteractPerformed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        Debug.Log(obj);
     }
 
     public Vector2 GetDirectionVectorNormalized() {

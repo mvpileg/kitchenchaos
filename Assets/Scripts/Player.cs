@@ -9,6 +9,7 @@ public class Player : MonoBehaviour {
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float rotateSpeed = 20f;
     [SerializeField] private GameInput gameInput;
+    [SerializeField] private LayerMask countersLayerMask;
     
     private float playerRadius = 0.7f;
     private float playerHeight = 2f;
@@ -33,9 +34,11 @@ public class Player : MonoBehaviour {
 
         // Check for interactable objects
         float interactDistance = 2f;
-        RaycastHit raycastHit;
-        if (Physics.Raycast(transform.position, lastInteractDir, out raycastHit, interactDistance)) {
-            Debug.Log(raycastHit.transform);
+        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, countersLayerMask)) {
+            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter)) {
+                clearCounter.Interact();
+                // 2:35:02
+            }
         } else {
             Debug.Log("-");
         }
