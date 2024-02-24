@@ -15,29 +15,31 @@ public class Player : MonoBehaviour {
     private float playerHeight = 2f;
 
     private bool isWalking;
-    private Vector3 lastInteractDir;
+
+    private Vector3 forwardDir;
+
+    private void Start() {
+        gameInput.OnInteractAction += GameInput_OnInteractAction;
+    }
 
     private void Update() {
         Vector2 inputDirVectorRaw = gameInput.GetDirectionVectorNormalized();
         Vector3 inputDirVector = new Vector3(inputDirVectorRaw.x, 0f, inputDirVectorRaw.y);
 
+        if (inputDirVector != Vector3.zero) {
+            forwardDir = inputDirVector;
+        }
+
         HandleMovement(inputDirVector);
-        HandleInteractions(inputDirVector);
     }
 
-    private void HandleInteractions(Vector3 interactDir) {
-
-        // Cache latest interact direction
-        if (interactDir != Vector3.zero) {
-            lastInteractDir = interactDir;
-        }
+    private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
 
         // Check for interactable objects
         float interactDistance = 2f;
-        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, countersLayerMask)) {
+        if (Physics.Raycast(transform.position, forwardDir, out RaycastHit raycastHit, interactDistance, countersLayerMask)) {
             if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter)) {
                 clearCounter.Interact();
-                // 2:35:02
             }
         } else {
             Debug.Log("-");
