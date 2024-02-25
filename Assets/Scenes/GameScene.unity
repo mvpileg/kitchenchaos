@@ -244,6 +244,12 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -250024430325873776, guid: d02f778e7975a9d4bb2d58ee44702d69,
+        type: 3}
+      propertyPath: tomatoPrefab
+      value: 
+      objectReference: {fileID: 5899233131730217429, guid: ac191f84c15fc774b8c3e52dffd50944,
+        type: 3}
     - target: {fileID: 1579232506773462947, guid: d02f778e7975a9d4bb2d58ee44702d69,
         type: 3}
       propertyPath: m_Name
@@ -735,6 +741,9 @@ MonoBehaviour:
   moveSpeed: 7
   rotateSpeed: 20
   gameInput: {fileID: 495862909}
+  countersLayerMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1 &963381690
 GameObject:
   m_ObjectHideFlags: 0
