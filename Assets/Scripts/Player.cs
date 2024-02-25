@@ -6,6 +6,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour {
 
+    public static Player Instance { get; private set; }
+
+    public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    public class OnSelectedCounterChangedEventArgs : EventArgs {
+        public ClearCounter selectedCounter;
+    }
+
     [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float rotateSpeed = 20f;
     [SerializeField] private GameInput gameInput;
@@ -17,6 +24,14 @@ public class Player : MonoBehaviour {
     private bool isWalking;
 
     private Vector3 forwardDir;
+    private ClearCounter selectedCounter;
+
+    private void Awake() {
+        if (Instance != null) {
+            Debug.LogError("Existing player instance found");
+        }
+        Instance = this;
+    }
 
     private void Start() {
         gameInput.OnInteractAction += GameInput_OnInteractAction;
@@ -31,20 +46,31 @@ public class Player : MonoBehaviour {
         }
 
         HandleMovement(inputDirVector);
+        HandleInteractionProjection();
     }
 
-    private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
+    // MARK: Interactions
 
+    private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
+        selectedCounter?.Interact();
+    }
+
+    private void HandleInteractionProjection() {
+        selectedCounter = GetInteractableCounter();
+        OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs {
+            selectedCounter = selectedCounter
+        });
+    }    
+    private ClearCounter GetInteractableCounter() {
         // Check for interactable objects
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, forwardDir, out RaycastHit raycastHit, interactDistance, countersLayerMask)) {
-            if (raycastHit.transform.TryGetComponent(out ClearCounter clearCounter)) {
-                clearCounter.Interact();
-            }
-        } else {
-            Debug.Log("-");
-        }
+            return raycastHit.transform.GetComponent<ClearCounter>();
+        } 
+        return null;
     }
+
+    // MARK: Movement
 
     private void HandleMovement(Vector3 moveDir) {
      
