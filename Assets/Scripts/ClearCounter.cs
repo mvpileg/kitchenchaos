@@ -10,6 +10,9 @@ public class ClearCounter : MonoBehaviour {
     public void Interact() {
         Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab, counterTopPoint);
         kitchenObjectTransform.localPosition = Vector3.zero;
+
+        Debug.Log(kitchenObjectSO.objectName);
+        Debug.Log(kitchenObjectTransform.GetComponent<KitchenObject>().GetKitchenObjectSO().objectName);
     }
 
 }
