@@ -26,6 +26,8 @@ public class Player : MonoBehaviour {
     private Vector3 forwardDir;
     private ClearCounter selectedCounter;
 
+    // MARK: Lifecycle methods
+
     private void Awake() {
         if (Instance != null) {
             Debug.LogError("Existing player instance found");
@@ -38,15 +40,24 @@ public class Player : MonoBehaviour {
     }
 
     private void Update() {
-        Vector2 inputDirVectorRaw = gameInput.GetDirectionVectorNormalized();
-        Vector3 inputDirVector = new Vector3(inputDirVectorRaw.x, 0f, inputDirVectorRaw.y);
+        Vector3 inputDirVector = GetInputDirVector();
 
+        CacheForwardDir(inputDirVector);
+        HandleMovement(inputDirVector);
+        HandleSelectionProjection();
+    }
+
+    // MARK: Inputs
+
+    private Vector3 GetInputDirVector() {
+        Vector2 inputDirVectorRaw = gameInput.GetDirectionVectorNormalized();
+        return new Vector3(inputDirVectorRaw.x, 0f, inputDirVectorRaw.y);
+    }
+
+    private void CacheForwardDir(Vector3 inputDirVector) {
         if (inputDirVector != Vector3.zero) {
             forwardDir = inputDirVector;
         }
-
-        HandleMovement(inputDirVector);
-        HandleInteractionProjection();
     }
 
     // MARK: Interactions
@@ -55,14 +66,13 @@ public class Player : MonoBehaviour {
         selectedCounter?.Interact();
     }
 
-    private void HandleInteractionProjection() {
-        selectedCounter = GetInteractableCounter();
+    private void HandleSelectionProjection() {
+        selectedCounter = GetSelectableCounter();
         OnSelectedCounterChanged?.Invoke(this, new OnSelectedCounterChangedEventArgs {
             selectedCounter = selectedCounter
         });
     }    
-    private ClearCounter GetInteractableCounter() {
-        // Check for interactable objects
+    private ClearCounter GetSelectableCounter() {
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, forwardDir, out RaycastHit raycastHit, interactDistance, countersLayerMask)) {
             return raycastHit.transform.GetComponent<ClearCounter>();
