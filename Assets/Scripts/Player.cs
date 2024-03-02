@@ -16,7 +16,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
-        public ClearCounter selectedCounter;
+        public BaseCounter selectedCounter;
     }
 
     [SerializeField] private float moveSpeed = 10f;
@@ -31,7 +31,7 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     private bool isWalking;
 
     private Vector3 forwardDir;
-    private ClearCounter selectedCounter;
+    private BaseCounter selectedCounter;
 
     // MARK: Lifecycle methods
 
@@ -79,10 +79,10 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
             selectedCounter = selectedCounter
         });
     }    
-    private ClearCounter GetSelectableCounter() {
+    private BaseCounter GetSelectableCounter() {
         float interactDistance = 2f;
         if (Physics.Raycast(transform.position, forwardDir, out RaycastHit raycastHit, interactDistance, countersLayerMask)) {
-            return raycastHit.transform.GetComponent<ClearCounter>();
+            return raycastHit.transform.GetComponent<BaseCounter>();
         } 
         return null;
     }
