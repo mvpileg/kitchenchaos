@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
 
-public class Player : MonoBehaviour {
+public class Player : MonoBehaviour, IKitchenObjectParent {
 
     public static Player Instance { get; private set; }
 
@@ -17,7 +17,8 @@ public class Player : MonoBehaviour {
     [SerializeField] private float rotateSpeed = 20f;
     [SerializeField] private GameInput gameInput;
     [SerializeField] private LayerMask countersLayerMask;
-    
+    [SerializeField] private Transform kitchenObjectHoldPoint;
+
     private float playerRadius = 0.7f;
     private float playerHeight = 2f;
 
@@ -25,6 +26,8 @@ public class Player : MonoBehaviour {
 
     private Vector3 forwardDir;
     private ClearCounter selectedCounter;
+
+    private KitchenObject kitchenObject;
 
     // MARK: Lifecycle methods
 
@@ -63,7 +66,7 @@ public class Player : MonoBehaviour {
     // MARK: Interactions
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e) {
-        selectedCounter?.Interact();
+        selectedCounter?.Interact(this);
     }
 
     private void HandleSelectionProjection() {
@@ -124,4 +127,25 @@ public class Player : MonoBehaviour {
         return isWalking;
     }
 
+    // MARK: IKitchenObjectParent
+    
+    public void SetKitchenObject(KitchenObject kitchenObject) {
+        this.kitchenObject = kitchenObject;
+    }
+
+    public KitchenObject GetKitchenObject() {
+        return kitchenObject;
+    }
+
+    public bool HasKitchenObject() {
+        return kitchenObject != null;
+    }
+
+    public void ClearKitchenObject() {
+        kitchenObject = null;
+    }
+
+    public Transform GetKitchenObjectFollowTransform() {
+        return kitchenObjectHoldPoint;
+    }
 }
