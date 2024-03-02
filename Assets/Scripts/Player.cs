@@ -8,6 +8,11 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
 
     public static Player Instance { get; private set; }
     public KitchenObject KitchenObject { get; set; }
+    public Transform HoldPosition {
+        get {
+            return kitchenObjectHoldPoint;
+        }
+    }
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
@@ -126,9 +131,4 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
         return isWalking;
     }
 
-    // MARK: IKitchenObjectParent
-
-    public Transform GetKitchenObjectFollowTransform() {
-        return kitchenObjectHoldPoint;
-    }
 }

@@ -8,6 +8,11 @@ public class ClearCounter : MonoBehaviour, IKitchenObjectParent {
     [SerializeField] private Transform counterTopPoint;
 
     public KitchenObject KitchenObject { get; set; }
+    public Transform HoldPosition {
+        get {
+            return counterTopPoint;
+        }
+    }
 
     public void Interact(Player player) {
         if (KitchenObject == null) {
@@ -18,10 +23,6 @@ public class ClearCounter : MonoBehaviour, IKitchenObjectParent {
             KitchenObject.SetKitchenObjectParent(player);
         }
 
-    }
-
-    public Transform GetKitchenObjectFollowTransform() {
-        return counterTopPoint;
     }
 
 }
