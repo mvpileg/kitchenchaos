@@ -7,33 +7,17 @@ public class ClearCounter : MonoBehaviour, IKitchenObjectParent {
     [SerializeField] private KitchenObjectSO kitchenObjectSO;
     [SerializeField] private Transform counterTopPoint;
 
-    private KitchenObject kitchenObject;
+    public KitchenObject KitchenObject { get; set; }
 
     public void Interact(Player player) {
-        if (kitchenObject == null) {
+        if (KitchenObject == null) {
             Transform kitchenObjectTransform = Instantiate(kitchenObjectSO.prefab, counterTopPoint);
             kitchenObjectTransform.GetComponent<KitchenObject>().SetKitchenObjectParent(this);
         } else {
             // Give the object to the player
-            kitchenObject.SetKitchenObjectParent(player);
+            KitchenObject.SetKitchenObjectParent(player);
         }
 
-    }
-
-    public void SetKitchenObject(KitchenObject kitchenObject) {
-        this.kitchenObject = kitchenObject;
-    }
-
-    public KitchenObject GetKitchenObject() {
-        return kitchenObject;
-    }
-
-    public bool HasKitchenObject() {
-        return kitchenObject != null;
-    }
-
-    public void ClearKitchenObject() {
-        kitchenObject = null;
     }
 
     public Transform GetKitchenObjectFollowTransform() {

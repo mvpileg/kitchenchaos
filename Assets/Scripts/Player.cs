@@ -7,6 +7,7 @@ using UnityEngine;
 public class Player : MonoBehaviour, IKitchenObjectParent {
 
     public static Player Instance { get; private set; }
+    public KitchenObject KitchenObject { get; set; }
 
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
     public class OnSelectedCounterChangedEventArgs : EventArgs {
@@ -26,8 +27,6 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
 
     private Vector3 forwardDir;
     private ClearCounter selectedCounter;
-
-    private KitchenObject kitchenObject;
 
     // MARK: Lifecycle methods
 
@@ -128,22 +127,6 @@ public class Player : MonoBehaviour, IKitchenObjectParent {
     }
 
     // MARK: IKitchenObjectParent
-    
-    public void SetKitchenObject(KitchenObject kitchenObject) {
-        this.kitchenObject = kitchenObject;
-    }
-
-    public KitchenObject GetKitchenObject() {
-        return kitchenObject;
-    }
-
-    public bool HasKitchenObject() {
-        return kitchenObject != null;
-    }
-
-    public void ClearKitchenObject() {
-        kitchenObject = null;
-    }
 
     public Transform GetKitchenObjectFollowTransform() {
         return kitchenObjectHoldPoint;
