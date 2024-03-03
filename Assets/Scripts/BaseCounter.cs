@@ -5,10 +5,10 @@ using UnityEngine;
 
 public abstract class BaseCounter : MonoBehaviour, IKitchenObjectParent {
 
-    [SerializeField] protected KitchenObjectSO kitchenObjectSO;
+    public KitchenObject KitchenObject { get; set; }
+
     [SerializeField] private Transform counterTopPoint;
 
-    public KitchenObject KitchenObject { get; set; }
     public Transform HoldPosition {
         get {
             return counterTopPoint;
