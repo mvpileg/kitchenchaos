@@ -15,13 +15,15 @@ public class CuttingCounter : BaseCounter {
             player.KitchenObject?.SetKitchenObjectParent(this);
         } else if (hasKitchenObject && !playerHasKitchenObject) {
             // give to player
-             KitchenObject?.SetKitchenObjectParent(player);
+            KitchenObject?.SetKitchenObjectParent(player);
         }
     }
 
     public override void InteractAlternate(Player player) {
-        KitchenObject?.DestroySelf();
-        KitchenObject.SpawnKitchenObject(cutKitchenObjectSO, this);
+        if (KitchenObject != null) {
+            KitchenObject.DestroySelf();
+            KitchenObject.SpawnKitchenObject(cutKitchenObjectSO, this);
+        }
     }
 
 }
