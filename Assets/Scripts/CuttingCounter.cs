@@ -3,18 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CuttingCounter : BaseCounter {
-
+    
     [SerializeField] private CuttingRecipeSO[] cuttingRecipeSOArray;
-
-    [SerializeField] private KitchenObjectSO cutKitchenObjectSO;
 
     public override void Interact(Player player) {
         bool playerHasKitchenObject = player.KitchenObject != null;
         bool hasKitchenObject = KitchenObject != null;
 
         if (playerHasKitchenObject && !hasKitchenObject) {
-            // give to counter
-            player.KitchenObject?.SetKitchenObjectParent(this);
+            if (HasRecipeForInput(player.KitchenObject.GetKitchenObjectSO())) {
+                // give to counter
+                player.KitchenObject?.SetKitchenObjectParent(this);
+            }
         } else if (hasKitchenObject && !playerHasKitchenObject) {
             // give to player
             KitchenObject?.SetKitchenObjectParent(player);
@@ -22,11 +22,18 @@ public class CuttingCounter : BaseCounter {
     }
 
     public override void InteractAlternate(Player player) {
-        if (KitchenObject != null) {
-            KitchenObjectSO outputKitchenObjectSO = GetOutputForInput(KitchenObject.GetKitchenObjectSO());
-            KitchenObject.DestroySelf();
-            KitchenObject.SpawnKitchenObject(outputKitchenObjectSO, this);
+        if (KitchenObject == null) {
+            return;
         }
+        KitchenObjectSO newKitchenObjectSO = GetOutputForInput(KitchenObject.GetKitchenObjectSO());
+        if (newKitchenObjectSO) {
+            KitchenObject.DestroySelf();
+            KitchenObject.SpawnKitchenObject(newKitchenObjectSO, this);
+        }
+    }
+
+    private bool HasRecipeForInput(KitchenObjectSO kitchenObjectSO) {
+        return GetOutputForInput(kitchenObjectSO) != null;
     }
 
     private KitchenObjectSO GetOutputForInput(KitchenObjectSO inputKitchenObjectSO) {
