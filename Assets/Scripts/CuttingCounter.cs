@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,6 +6,11 @@ using UnityEngine;
 
 public class CuttingCounter : BaseCounter {
     
+    public event EventHandler<OnProgressChangedEventArgs> OnProgressChanged;
+    public class OnProgressChangedEventArgs : EventArgs {
+        public float progressNormalized;
+    }
+
     [SerializeField] private CuttingRecipeSO[] cuttingRecipeSOArray;
 
     private int cuttingProgress;
@@ -15,11 +21,11 @@ public class CuttingCounter : BaseCounter {
 
         if (playerHasKitchenObject && !hasKitchenObject) {
             // give to counter
-            player.KitchenObject?.SetKitchenObjectParent(this);
-            cuttingProgress = 0;
+            player.KitchenObject.SetKitchenObjectParent(this);
+            ResetCuttingProgress();
         } else if (hasKitchenObject && !playerHasKitchenObject) {
             // give to player
-            KitchenObject?.SetKitchenObjectParent(player);
+            KitchenObject.SetKitchenObjectParent(player);
         }
     }
 
@@ -35,10 +41,10 @@ public class CuttingCounter : BaseCounter {
         if (newKitchenObjectSO == null) {
             return;
         }
+        bool isDoneCutting = CutIngredient(cuttingRecipeSO);
 
-        cuttingProgress++;
-
-        if (cuttingProgress >= cuttingRecipeSO.cuttingProgressMax) {
+        if (isDoneCutting) {
+            ResetCuttingProgress();
             KitchenObject.DestroySelf();
             KitchenObject.SpawnKitchenObject(newKitchenObjectSO, this);
         }
@@ -51,6 +57,21 @@ public class CuttingCounter : BaseCounter {
             }
         }
         return null;
+    }
+
+    private void ResetCuttingProgress() {
+        cuttingProgress = 0;
+        OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
+            progressNormalized = 0f
+        });
+    }
+
+    private bool CutIngredient(CuttingRecipeSO cuttingRecipeSO) {
+        cuttingProgress++;
+        OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
+            progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax
+        });
+        return cuttingProgress >= cuttingRecipeSO.cuttingProgressMax;
     }
 
 }
