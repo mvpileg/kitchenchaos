@@ -84,35 +84,4 @@ public class StoveCounter : BaseCounter {
         return null;
     }
 
-    // private bool CutIngredient(CuttingRecipeSO cuttingRecipeSO) {
-    //     cuttingProgress++;
-    //     OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
-    //         progressNormalized = (float)cuttingProgress / cuttingRecipeSO.cuttingProgressMax
-    //     });
-    //     return cuttingProgress >= cuttingRecipeSO.cuttingProgressMax;
-    // }
-
-    private void ObjectAdded() {
-        // fryingRecipeSO = GetFryingRecipeSOWithInput(KitchenObject);
-        // fryingTime = 0;
-        // if (CanCut(KitchenObject)) {
-        //     cuttingProgress = 0;
-        //     OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
-        //         progressNormalized = 0f
-        //     });
-        // } else {
-        //     OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
-        //         canCut = false
-        //     });
-        // }
-    }
-
-    private void ObjectRemoved() {
-        // fryingRecipeSO = null;
-        // OnProgressChanged?.Invoke(this, new OnProgressChangedEventArgs {
-        //     canCut = false
-        // });
-    }
-
-
 }
