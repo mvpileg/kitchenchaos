@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StoveCounter : BaseCounter {
+public class StoveCounter : BaseCounter, IHasProgress {
+
+    public event EventHandler<IHasProgress.OnProgressChangedEventArgs> OnProgressChanged;
 
     public event EventHandler<OnStateChangedEventArgs> OnStateChanged;
     public class OnStateChangedEventArgs : EventArgs {
@@ -35,10 +37,10 @@ public class StoveCounter : BaseCounter {
             case State.Idle:
                 SetState(State.Frying);
                 fryingRecipeSO = GetFryingRecipeSOWithInput(KitchenObject);
-                cookingTime = 0f;
+                ResetCookingTime();
                 break;
             case State.Frying:
-                cookingTime += Time.deltaTime;
+                IncrementCookingTime(Time.deltaTime);
                 if (cookingTime > fryingRecipeSO.fryingTimerMax) {
                     SetState(State.Fried);
                     KitchenObject.DestroySelf();
@@ -46,7 +48,7 @@ public class StoveCounter : BaseCounter {
                 }
                 break;
             case State.Fried:
-                cookingTime += Time.deltaTime;
+                IncrementCookingTime(Time.deltaTime);
                 if (cookingTime > fryingRecipeSO.burntTimerMax) {
                     SetState(State.Burnt);
                     KitchenObject.DestroySelf();
@@ -54,7 +56,6 @@ public class StoveCounter : BaseCounter {
                 }
                 break;
             case State.Burnt:
-                cookingTime += Time.deltaTime;
                 break;      
         }
     }
@@ -93,6 +94,43 @@ public class StoveCounter : BaseCounter {
         this.state = state;
         OnStateChanged?.Invoke(this, new OnStateChangedEventArgs {
             state = state
+        });
+    }
+
+    private void ResetCookingTime() {
+        cookingTime = 0f;
+        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
+            progressNormalized = 0f
+        });
+    }
+
+    private void IncrementCookingTime(float time) {
+        cookingTime += time;
+
+        IHasProgress.State progressBarState;
+        float progressNormalized;
+        bool shouldShowProgress;
+
+        if (cookingTime < fryingRecipeSO.fryingTimerMax) {
+            progressNormalized = cookingTime / fryingRecipeSO.fryingTimerMax;
+            progressBarState = IHasProgress.State.Normal;
+            shouldShowProgress = true;
+        } else if (cookingTime < fryingRecipeSO.burntTimerMax) {
+            float timeToBurnFromCooked = fryingRecipeSO.burntTimerMax - fryingRecipeSO.fryingTimerMax;
+            float timeSinceCooked = cookingTime - fryingRecipeSO.fryingTimerMax;
+            progressNormalized = timeSinceCooked / timeToBurnFromCooked;
+            progressBarState = IHasProgress.State.Warning;
+            shouldShowProgress = true;
+        } else {
+            progressNormalized = 0f;
+            progressBarState = IHasProgress.State.Normal;
+            shouldShowProgress = false;
+        }
+
+        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
+            progressNormalized = progressNormalized,
+            state = progressBarState,
+            shouldShowProgress = shouldShowProgress
         });
     }
 
