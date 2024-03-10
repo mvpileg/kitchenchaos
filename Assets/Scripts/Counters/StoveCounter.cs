@@ -71,6 +71,9 @@ public class StoveCounter : BaseCounter, IHasProgress {
             // give to player
             KitchenObject.SetKitchenObjectParent(player);
             SetState(State.Idle);
+            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
+                shouldShowProgress = false
+            });
         }
     }
 
