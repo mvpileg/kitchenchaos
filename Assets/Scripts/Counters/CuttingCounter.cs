@@ -12,32 +12,6 @@ public class CuttingCounter : BaseCounter, IHasProgress {
 
     private int cuttingProgress;
 
-    public override void Interact(Player player) {
-        bool playerHasKitchenObject = player.KitchenObject != null;
-        bool hasKitchenObject = KitchenObject != null;
-
-        if (playerHasKitchenObject && !hasKitchenObject) {
-            // give to counter
-            player.KitchenObject.SetKitchenObjectParent(this);
-            ObjectAdded();
-        } else if (hasKitchenObject && !playerHasKitchenObject) {
-            // give to player
-            KitchenObject.SetKitchenObjectParent(player);
-            ObjectRemoved();
-        } else if (playerHasKitchenObject && hasKitchenObject) {
-            if (player.KitchenObject.TryGetPlate(out PlateKitchenObject playerPlate)) {
-                if (playerPlate.TryGiveKitchenObject(KitchenObject)) {
-                    KitchenObject.DestroySelf();
-                    ObjectRemoved();
-                }
-            } else if (KitchenObject.TryGetPlate(out PlateKitchenObject counterPlate)) {
-                if (counterPlate.TryGiveKitchenObject(player.KitchenObject)) {
-                    player.KitchenObject.DestroySelf();
-                }   
-            }
-        }
-    }
-
     public override void InteractAlternate(Player player) {
         CuttingRecipeSO cuttingRecipeSO = GetCuttingRecipeSOWithInput(KitchenObject);
         if (cuttingRecipeSO == null) {
@@ -49,7 +23,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
         if (isDoneCutting) {
             KitchenObject.DestroySelf();
             KitchenObject.SpawnKitchenObject(cuttingRecipeSO.output, this);
-            ObjectAdded();
+            ObjectWasAdded();
         }
     }
 
@@ -78,7 +52,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
         return cuttingProgress >= cuttingRecipeSO.cuttingProgressMax;
     }
 
-    private void ObjectAdded() {
+    protected override void ObjectWasAdded() {
         if (CanCut(KitchenObject)) {
             cuttingProgress = 0;
             OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
@@ -91,7 +65,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
         }
     }
 
-    private void ObjectRemoved() {
+    protected override void ObjectWasRemoved() {
         OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
             shouldShowProgress = false
         });

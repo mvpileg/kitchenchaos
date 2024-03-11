@@ -21,6 +21,7 @@ public class PlateKitchenObject : KitchenObject {
         if (kitchenObjectSOs.Contains(kitchenObjectSO)) {
             return false;
         } else {
+            kitchenObject.DestroySelf();
             kitchenObjectSOs.Add(kitchenObjectSO);
             return true;
         }

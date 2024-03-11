@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlatesCounter : BaseCounter {
@@ -43,6 +44,8 @@ public class PlatesCounter : BaseCounter {
     }
 
     public override void Interact(Player player) {
+        base.Interact(player);
+        
         if (player.KitchenObject != null || platesSpawnedCount == 0) {
             return;
         }
@@ -53,6 +56,10 @@ public class PlatesCounter : BaseCounter {
         });
 
         KitchenObject.SpawnKitchenObject(plateKitchenObjectSO, player);
+    }
+
+    protected override bool CanAccept(KitchenObject kitchenObject) {
+        return false;
     }
 
 }

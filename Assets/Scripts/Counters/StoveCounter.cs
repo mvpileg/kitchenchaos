@@ -60,39 +60,15 @@ public class StoveCounter : BaseCounter, IHasProgress {
         }
     }
 
-    public override void Interact(Player player) {
-        bool playerHasKitchenObject = player.KitchenObject != null;
-        bool hasKitchenObject = KitchenObject != null;
-
-        if (playerHasKitchenObject && !hasKitchenObject && CanFry(player.KitchenObject)) {
-            // give to stove
-            player.KitchenObject.SetKitchenObjectParent(this);
-        } else if (hasKitchenObject && !playerHasKitchenObject) {
-            // give to player
-            KitchenObject.SetKitchenObjectParent(player);
-            SetState(State.Idle);
-            OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
-                shouldShowProgress = false
-            });
-        } else if (playerHasKitchenObject && hasKitchenObject) {
-            if (player.KitchenObject.TryGetPlate(out PlateKitchenObject playerPlate)) {
-                if (playerPlate.TryGiveKitchenObject(KitchenObject)) {
-                    KitchenObject.DestroySelf();
-                    SetState(State.Idle);
-                    OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
-                        shouldShowProgress = false
-                    });
-                }
-            } else if (KitchenObject.TryGetPlate(out PlateKitchenObject counterPlate)) {
-                if (counterPlate.TryGiveKitchenObject(player.KitchenObject)) {
-                    player.KitchenObject.DestroySelf();
-                }   
-            }
-        }
+    protected override bool CanAccept(KitchenObject kitchenObject) {
+        return GetFryingRecipeSOWithInput(kitchenObject) != null;
     }
 
-    private bool CanFry(KitchenObject kitchenObject) {
-        return GetFryingRecipeSOWithInput(kitchenObject) != null;
+    protected override void ObjectWasRemoved() {
+        SetState(State.Idle);
+        OnProgressChanged?.Invoke(this, new IHasProgress.OnProgressChangedEventArgs {
+            shouldShowProgress = false
+        });
     }
 
     private FryingRecipeSO GetFryingRecipeSOWithInput(KitchenObject inputKitchenObject) {
