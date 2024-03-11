@@ -24,6 +24,17 @@ public class CuttingCounter : BaseCounter, IHasProgress {
             // give to player
             KitchenObject.SetKitchenObjectParent(player);
             ObjectRemoved();
+        } else if (playerHasKitchenObject && hasKitchenObject) {
+            if (player.KitchenObject.TryGetPlate(out PlateKitchenObject playerPlate)) {
+                if (playerPlate.TryGiveKitchenObject(KitchenObject)) {
+                    KitchenObject.DestroySelf();
+                    ObjectRemoved();
+                }
+            } else if (KitchenObject.TryGetPlate(out PlateKitchenObject counterPlate)) {
+                if (counterPlate.TryGiveKitchenObject(player.KitchenObject)) {
+                    player.KitchenObject.DestroySelf();
+                }   
+            }
         }
     }
 
@@ -55,6 +66,7 @@ public class CuttingCounter : BaseCounter, IHasProgress {
                 return cuttingRecipeSO;
             }
         }
+        
         return null;
     }
 

@@ -22,6 +22,16 @@ public class KitchenObject : MonoBehaviour
         transform.localPosition = Vector3.zero;
     }
 
+    public bool TryGetPlate(out PlateKitchenObject plateKitchenObject) {
+        if (this is PlateKitchenObject) {
+            plateKitchenObject = this as PlateKitchenObject;
+            return true;
+        } else {
+            plateKitchenObject = null;
+            return false;
+        }
+    }
+
     public IKitchenObjectParent GetClearCounter() {
         return kitchenObjectParent;
     }
