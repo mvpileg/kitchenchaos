@@ -9,11 +9,11 @@ public class PlateIconsUI : MonoBehaviour {
     [SerializeField] private Transform iconTemplate;
 
     private void Awake() {
-        // iconTemplate.gameObject.SetActive(false);
+        iconTemplate.gameObject.SetActive(false);
     }
 
     private void Start() {
-        // plateKitchenObject.OnIngredientAdded += PlateKitchenObject_OnIngredientAdded;
+        plateKitchenObject.OnIngredientAdded += PlateKitchenObject_OnIngredientAdded;
     }
 
     private void PlateKitchenObject_OnIngredientAdded(object sender, PlateKitchenObject.OnIngredientAddedEventArgs e) {
@@ -21,6 +21,7 @@ public class PlateIconsUI : MonoBehaviour {
     }
 
     private void UpdateVisual() {
+        Debug.Log("Updating PlateIconUI visual");
         foreach (Transform child in transform) {
             if (child == iconTemplate) { 
                 continue;
