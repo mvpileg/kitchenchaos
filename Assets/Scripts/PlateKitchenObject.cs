@@ -23,19 +23,26 @@ public class PlateKitchenObject : KitchenObject {
     public bool TryGiveKitchenObject(KitchenObject kitchenObject) {
         KitchenObjectSO kitchenObjectSO = kitchenObject.GetKitchenObjectSO();
         if (!allowableKitchenObjectSOs.Contains(kitchenObjectSO)) {
+            Debug.Log("This kitchenObjectSO is not allowed");
             return false;
         }
         if (kitchenObjectSOs.Contains(kitchenObjectSO)) {
+            Debug.Log("Already have this kitchenObjectSO");
             return false;
         } else {
             kitchenObject.DestroySelf();
             kitchenObjectSOs.Add(kitchenObjectSO);
-
+            Debug.Log("Adding kitchenObjectSO");
+;
             OnIngredientAdded?.Invoke(this, new OnIngredientAddedEventArgs {
                 kitchenObjectSO = kitchenObjectSO
             });
             return true;
         }
+    }
+
+    public List<KitchenObjectSO> GetKitchenObjectSOList() {
+        return kitchenObjectSOs;
     }
 
 }
